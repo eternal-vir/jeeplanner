@@ -1,0 +1,1845 @@
+<!--
+  JEE Planner
+  Made by Vatsal (@eternal_vatsal)
+  Contact: instagram.com/eternal_vatsal
+  © All rights reserved. Unauthorized copying, redistribution, or
+  republishing of this app/source without permission is prohibited.
+-->
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="author" content="Vatsal (@eternal_vatsal)" />
+  <meta name="copyright" content="Made by Vatsal. All rights reserved." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jee study Planner</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0c1117" />
+  <link rel="icon" href="icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="JEE Planner" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0c1117;
+      --bg-2:#121923;
+      --panel:rgba(18,25,35,.72);
+      --panel-strong:#171f2b;
+      --text:#eef3fb;
+      --muted:#9aabbd;
+      --line:rgba(255,255,255,.1);
+      --accent:#8ef0c9;
+      --accent-2:#c9a7ff;
+      --accent-3:#ffd166;
+      --danger:#ff6b6b;
+      --success:#5be38f;
+      --shadow:0 20px 80px rgba(0,0,0,.35);
+      --radius:24px;
+      --radius-sm:16px;
+      --blur:18px;
+    }
+    html[data-theme="light"]{
+      --bg:#f3f6fb;
+      --bg-2:#ffffff;
+      --panel:rgba(255,255,255,.72);
+      --panel-strong:#ffffff;
+      --text:#111827;
+      --muted:#5b6472;
+      --line:rgba(17,24,39,.09);
+      --accent:#0ea37f;
+      --accent-2:#7c3aed;
+      --accent-3:#c28700;
+      --danger:#dc2626;
+      --success:#15803d;
+      --shadow:0 20px 60px rgba(30,41,59,.12);
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:"Space Grotesk",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(142,240,201,.12), transparent 28%),
+        radial-gradient(circle at 85% 12%, rgba(201,167,255,.14), transparent 24%),
+        radial-gradient(circle at 55% 78%, rgba(255,209,102,.10), transparent 22%),
+        linear-gradient(180deg,var(--bg),var(--bg-2));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size:26px 26px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.4), transparent 85%);
+      pointer-events:none;
+      opacity:.35;
+    }
+
+    .container{
+      width:min(1400px, calc(100% - 28px));
+      margin-inline:auto;
+    }
+
+    .glass{
+      background:var(--panel);
+      border:1px solid var(--line);
+      backdrop-filter:blur(var(--blur));
+      -webkit-backdrop-filter:blur(var(--blur));
+      box-shadow:var(--shadow);
+      border-radius:var(--radius);
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:linear-gradient(180deg, rgba(12,17,23,.82), rgba(12,17,23,.45), transparent);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+    }
+    html[data-theme="light"] .topbar{
+      background:linear-gradient(180deg, rgba(243,246,251,.9), rgba(243,246,251,.55), transparent);
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:16px 0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
+    }
+    .brand-mark{
+      width:48px;height:48px;border-radius:16px;
+      background:
+        linear-gradient(135deg,var(--accent),transparent 70%),
+        linear-gradient(225deg,var(--accent-2),transparent 70%),
+        var(--panel-strong);
+      border:1px solid var(--line);
+      display:grid;
+      place-items:center;
+      font-weight:700;
+      letter-spacing:.08em;
+    }
+    .brand h1{
+      margin:0;
+      font-size:clamp(1rem, 1.4vw, 1.2rem);
+      line-height:1.1;
+      letter-spacing:.02em;
+    }
+    .brand p{
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:.84rem;
+    }
+
+    .nav-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    button, input, select, textarea{
+      font:inherit;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:12px 16px;
+      border-radius:999px;
+      color:var(--text);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow:0 10px 26px rgba(0,0,0,.18); border-color:rgba(255,255,255,.18)}
+    .btn:active{transform:translateY(1px) scale(.99)}
+    .btn.primary{
+      color:#08120f;
+      background:linear-gradient(135deg,var(--accent),#c6ffe8);
+      border-color:transparent;
+      font-weight:700;
+    }
+    .btn.secondary{
+      background:linear-gradient(135deg, rgba(201,167,255,.18), rgba(201,167,255,.06));
+    }
+    .btn.warn{
+      background:linear-gradient(135deg, rgba(255,107,107,.18), rgba(255,107,107,.06));
+      color:var(--text);
+    }
+    .btn.small{padding:9px 12px;font-size:.92rem}
+
+    .hero{
+      padding:30px 0 14px;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.18fr .82fr;
+      gap:18px;
+    }
+
+    .hero-main{
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+      min-height:300px;
+    }
+    .hero-main::after{
+      content:"";
+      position:absolute;
+      right:-10%;
+      top:-25%;
+      width:340px;height:340px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle, rgba(142,240,201,.32), transparent 62%);
+      filter:blur(6px);
+      pointer-events:none;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px 12px;
+      color:var(--muted);
+      font-size:.82rem;
+      margin-bottom:18px;
+      background:rgba(255,255,255,.03);
+    }
+
+    .hero h2{
+      margin:0;
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(2.3rem, 5vw, 5rem);
+      line-height:.92;
+      letter-spacing:-.03em;
+      max-width:11ch;
+    }
+
+    .hero p.lead{
+      color:var(--muted);
+      margin:18px 0 24px;
+      font-size:1rem;
+      max-width:62ch;
+      line-height:1.7;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0,1fr));
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .stat{
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.03);
+    }
+    .stat .label{
+      color:var(--muted);
+      font-size:.82rem;
+      margin-bottom:10px;
+    }
+    .stat .value{
+      font-size:clamp(1.2rem, 2vw, 1.8rem);
+      font-weight:700;
+    }
+
+    .hero-side{
+      display:grid;
+      gap:18px;
+    }
+
+    .panel{
+      padding:22px;
+    }
+
+    .panel h3, .section-head h3{
+      margin:0 0 14px;
+      font-size:1.05rem;
+      letter-spacing:.02em;
+    }
+
+    .countdown{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+    }
+    .count-item{
+      padding:14px 10px;
+      text-align:center;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    }
+    .count-item b{
+      display:block;
+      font-size:1.45rem;
+      margin-bottom:4px;
+    }
+    .count-item span{
+      color:var(--muted);
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .main-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      padding:10px 0 32px;
+    }
+
+    .stack{display:grid;gap:18px}
+
+    /* App-like page views: navigation swaps the visible section without leaving the HTML page. */
+    .app-view-hidden{display:none !important;}
+    .app-view-active{display:block !important; animation:viewIn .22s ease;}
+    .main-grid.single-view{display:block;}
+    @keyframes viewIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+    .section{
+      padding:24px;
+    }
+
+    .section-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .section-head p{
+      margin:0;
+      color:var(--muted);
+      font-size:.92rem;
+    }
+
+    .table-wrap{
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:18px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:1100px;
+    }
+
+    th, td{
+      padding:12px 12px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+      text-align:left;
+      font-size:.92rem;
+    }
+
+    th{
+      position:sticky;
+      top:0;
+      background:var(--panel-strong);
+      z-index:1;
+      font-size:.83rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+    }
+
+    tr:hover td{
+      background:rgba(255,255,255,.025);
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-size:.78rem;
+      white-space:nowrap;
+    }
+    .chip.high{color:#ffd6d6;border-color:rgba(255,107,107,.35)}
+    .chip.med{color:#fff1c2;border-color:rgba(255,209,102,.35)}
+    .chip.low{color:#d6ffe9;border-color:rgba(91,227,143,.35)}
+    .chip.done{color:#c6ffe8;border-color:rgba(91,227,143,.45)}
+    .chip.today{color:#e8ddff;border-color:rgba(201,167,255,.45)}
+
+    .task-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .subject-filter{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .subject-pill{
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      cursor:pointer;
+      transition:.2s ease;
+      color:var(--text);
+    }
+    .subject-pill.active, .subject-pill:hover{
+      background:linear-gradient(135deg, rgba(142,240,201,.18), rgba(142,240,201,.05));
+      border-color:rgba(142,240,201,.35);
+      transform:translateY(-1px);
+    }
+
+    .cards{
+      display:grid;
+      gap:14px;
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:14px;
+    }
+
+    .subject-row{
+      display:grid;
+      grid-template-columns:110px 1fr auto;
+      gap:14px;
+      align-items:center;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.025);
+    }
+    .progress{
+      width:100%;
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+    }
+    .progress > span{
+      display:block;
+      height:100%;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      border-radius:999px;
+    }
+    .muted{color:var(--muted)}
+    .tiny{font-size:.82rem}
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .form-grid .full{grid-column:1 / -1}
+
+    .field{
+      display:grid;
+      gap:8px;
+    }
+    .field label{
+      font-size:.84rem;
+      color:var(--muted);
+    }
+    .input, .textarea, .select{
+      width:100%;
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 14px;
+      outline:none;
+      transition:.2s ease;
+    }
+    .input:focus, .textarea:focus, .select:focus{
+      border-color:rgba(142,240,201,.42);
+      box-shadow:0 0 0 4px rgba(142,240,201,.09);
+    }
+    .textarea{min-height:92px;resize:vertical}
+
+    .session-box{
+      display:grid;
+      gap:16px;
+    }
+    .timer{
+      font-family:"Cormorant Garamond",serif;
+      font-size:clamp(2.5rem, 7vw, 4.5rem);
+      line-height:.9;
+      letter-spacing:.02em;
+    }
+    .session-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .log-list, .mock-list{
+      display:grid;
+      gap:10px;
+      max-height:300px;
+      overflow:auto;
+      padding-right:2px;
+    }
+    .log-item, .mock-item{
+      padding:12px 14px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.03);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+    }
+
+    .calendar-note{
+      border-left:3px solid var(--accent);
+      padding-left:12px;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:.92rem;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.76rem;
+      border:1px solid var(--line);
+    }
+
+    .test-shell{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(4,8,12,.76);
+      backdrop-filter:blur(8px);
+      -webkit-backdrop-filter:blur(8px);
+      z-index:200;
+      padding:20px;
+      overflow:auto;
+    }
+    .test-shell.open{display:block}
+    .test-panel{
+      width:min(980px, 100%);
+      margin:2vh auto;
+      padding:24px;
+      position:relative;
+    }
+    .test-head{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
+      margin-bottom:18px;
+    }
+    .test-head h2{
+      margin:0;
+      font-family:"Cormorant Garamond",serif;
+      font-size:2.2rem;
+    }
+    .question{
+      padding:18px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      margin-bottom:12px;
+    }
+    .question p{
+      margin:0 0 12px;
+      line-height:1.6;
+    }
+    .option{
+      display:block;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      margin:8px 0;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+    .option:hover{background:rgba(255,255,255,.04)}
+    .option input{margin-right:8px}
+    .score-box{
+      margin-top:12px;
+      padding:16px;
+      border-radius:16px;
+      background:rgba(142,240,201,.08);
+      border:1px solid rgba(142,240,201,.25);
+      display:none;
+    }
+    .score-box.show{display:block}
+
+    .footer{
+      padding:12px 0 36px;
+      color:var(--muted);
+      font-size:.84rem;
+      text-align:center;
+    }
+
+    .footer .credit-link{
+      color:var(--muted);
+      text-decoration:none;
+      border-bottom:1px dotted var(--line);
+      cursor:pointer;
+    }
+    .footer .credit-link:hover{color:var(--text)}
+
+    #splashScreen{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(142,240,201,.12), transparent 28%),
+        radial-gradient(circle at 85% 12%, rgba(201,167,255,.14), transparent 24%),
+        linear-gradient(180deg,#0c1117,#121923);
+      transition:opacity .4s ease, visibility .4s ease;
+    }
+    #splashScreen.hide{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .splash-emoji{
+      font-size:3rem;
+      animation:splashPulse 1.4s ease-in-out infinite;
+    }
+    .splash-title{
+      font-family:"Space Grotesk",sans-serif;
+      font-size:1.6rem;
+      font-weight:700;
+      color:#eef3fb;
+      letter-spacing:.02em;
+    }
+    .splash-credit{
+      font-size:.86rem;
+      color:#9aabbd;
+    }
+    @keyframes splashPulse{
+      0%,100%{transform:scale(1); opacity:1;}
+      50%{transform:scale(1.12); opacity:.85;}
+    }
+
+    .about-overlay{
+      position:fixed;
+      inset:0;
+      z-index:9998;
+      background:rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .about-overlay.show{display:flex}
+    .about-card{
+      max-width:380px;
+      width:100%;
+      padding:28px;
+      text-align:center;
+    }
+    .about-card .about-emoji{font-size:2.4rem; margin-bottom:8px;}
+    .about-card h3{margin:0 0 6px;}
+    .about-card p{color:var(--muted); font-size:.92rem; margin:6px 0;}
+    .about-card a{color:var(--accent); text-decoration:none;}
+    .about-card .btn{margin-top:16px;}
+
+    .reveal{
+      opacity:0;
+      transform:translateY(24px);
+      animation:fadeUp .7s ease forwards;
+    }
+    .reveal:nth-child(2){animation-delay:.06s}
+    .reveal:nth-child(3){animation-delay:.12s}
+    .reveal:nth-child(4){animation-delay:.18s}
+    .reveal:nth-child(5){animation-delay:.24s}
+
+    @keyframes fadeUp{
+      to{opacity:1; transform:none}
+    }
+
+
+    /* Quick navigation */
+    html{scroll-behavior:smooth;scroll-padding-top:92px}
+    section[id], .hero[id]{scroll-margin-top:92px}
+
+    .quick-nav{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      z-index:80;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      padding:7px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(18,25,35,.76);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      box-shadow:0 18px 55px rgba(0,0,0,.30);
+      transition:opacity .25s ease, transform .25s ease;
+    }
+    html[data-theme="light"] .quick-nav{
+      background:rgba(255,255,255,.82);
+    }
+    .quick-nav.hidden{
+      opacity:0;
+      pointer-events:none;
+      transform:translate(-50%,12px);
+    }
+    .quick-nav-btn{
+      appearance:none;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--muted);
+      cursor:pointer;
+      min-width:42px;
+      height:38px;
+      padding:0 12px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      font:inherit;
+      font-size:.8rem;
+      white-space:nowrap;
+      transition:.2s ease;
+    }
+    .quick-nav-btn:hover{
+      color:var(--text);
+      background:rgba(255,255,255,.06);
+      border-color:var(--line);
+      transform:translateY(-1px);
+    }
+    .quick-nav-btn.active{
+      color:#08120f;
+      background:linear-gradient(135deg,var(--accent),#c6ffe8);
+      font-weight:700;
+    }
+    .quick-nav-icon{
+      font-size:1rem;
+      line-height:1;
+    }
+    .quick-nav-more{
+      position:relative;
+    }
+    .quick-menu{
+      position:absolute;
+      bottom:49px;
+      right:0;
+      width:205px;
+      padding:7px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:var(--panel-strong);
+      box-shadow:var(--shadow);
+      display:none;
+    }
+    .quick-menu.open{display:grid;gap:4px}
+    .quick-menu button{
+      appearance:none;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--text);
+      text-align:left;
+      padding:10px 11px;
+      border-radius:12px;
+      cursor:pointer;
+      font:inherit;
+      font-size:.84rem;
+    }
+    .quick-menu button:hover{
+      background:rgba(255,255,255,.05);
+      border-color:var(--line);
+    }
+    .top-jump{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:81;
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      padding:0;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(8px);
+      transition:.22s ease;
+    }
+    .top-jump.show{
+      opacity:1;
+      pointer-events:auto;
+      transform:none;
+    }
+    .quick-hint{
+      position:fixed;
+      right:20px;
+      bottom:73px;
+      z-index:80;
+      color:var(--muted);
+      font-size:.72rem;
+      opacity:.75;
+      pointer-events:none;
+    }
+    @media(max-width:720px){
+      .quick-nav{
+        width:calc(100% - 20px);
+        justify-content:space-between;
+        bottom:10px;
+      }
+      .quick-nav-btn{
+        min-width:0;
+        flex:1;
+        padding:0 7px;
+      }
+      .quick-nav-btn span:last-child{display:none}
+      .quick-nav-more{display:flex}
+      .top-jump{right:12px;bottom:68px}
+      .quick-hint{display:none}
+    }
+    @media(max-width:520px){
+      .quick-nav-btn{height:36px}
+      .quick-nav{gap:3px;padding:6px}
+    }
+
+    @media (max-width: 1100px){
+      .hero-grid,.main-grid{grid-template-columns:1fr}
+      .stats{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 720px){
+      .container{width:min(100% - 16px, 1400px)}
+      .hero-main,.panel,.section{padding:18px}
+      .stats,.mini-grid,.form-grid,.countdown{grid-template-columns:1fr 1fr}
+      .subject-row{grid-template-columns:1fr; gap:8px}
+      nav{align-items:flex-start;flex-direction:column}
+      .nav-actions{width:100%;justify-content:flex-start}
+      .count-item b{font-size:1.2rem}
+    }
+    @media (max-width: 520px){
+      .stats,.mini-grid,.form-grid,.countdown{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div id="splashScreen">
+    <div class="splash-emoji">📖</div>
+    <div class="splash-title">JEE Planner</div>
+    <div class="splash-credit">Made by @eternal_vatsal</div>
+  </div>
+
+  <div class="topbar">
+    <div class="container">
+      <nav>
+        <div class="brand">
+          <div class="brand-mark">JEE</div>
+          <div>
+            <h1>JEE Study Planner</h1>
+            <p>JEE Main • JEE Advanced • Personal Study Tracking</p>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <button class="btn small" id="themeToggle">Toggle Theme</button>
+          <button class="btn small secondary" id="exportBtn">Export Data</button>
+          <button class="btn small" id="importBtn">Import Data</button>
+          <input type="file" id="importFile" accept="application/json" hidden>
+          <button class="btn small warn" id="resetBtn">Reset All</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="hero" id="overview">
+      <div class="hero-grid">
+        <article class="hero-main glass reveal">
+          <div class="eyebrow">JEE Main + Advanced • Countdown target: 31 Dec 2026, 23:59:59</div>
+          <h2>Build the syllabus. Build the habit. Stay ahead.</h2>
+          <p class="lead">
+            A focused planner for <strong>JEE Main + JEE Advanced</strong>. Track the complete PCM syllabus,
+            add your own tasks with flexible subjects and time slots, and record actual study time with glassmorphism aesthetic.
+          </p>
+          <div class="stats">
+            <div class="stat">
+              <div class="label">Syllabus Progress</div>
+              <div class="value" id="overallProgressText">0%</div>
+            </div>
+            <div class="stat">
+              <div class="label">Tasks Completed</div>
+              <div class="value" id="completedCount">0</div>
+            </div>
+            <div class="stat">
+              <div class="label">Study Hours Logged</div>
+              <div class="value" id="studyHours">0.0h</div>
+            </div>
+            <div class="stat">
+              <div class="label">Pending Today</div>
+              <div class="value" id="todayPending">0</div>
+            </div>
+          </div>
+        </article>
+
+        <div class="hero-side">
+          <aside class="panel glass reveal">
+            <h3>Countdown to first exam</h3>
+            <div class="countdown">
+              <div class="count-item"><b id="cdDays">0</b><span>Days</span></div>
+              <div class="count-item"><b id="cdHours">0</b><span>Hours</span></div>
+              <div class="count-item"><b id="cdMinutes">0</b><span>Minutes</span></div>
+              <div class="count-item"><b id="cdSeconds">0</b><span>Seconds</span></div>
+            </div>
+            <div class="calendar-note" style="margin-top:14px;">
+              <strong>Target:</strong> 31 December 2026 • 11:59:59 PM
+            </div>
+          </aside>
+
+          <aside class="panel glass reveal" id="mockCountdownPanel">
+            <h3>Countdown to next coaching mock</h3>
+            <div class="countdown">
+              <div class="count-item"><b id="mockCdDays">0</b><span>Days</span></div>
+              <div class="count-item"><b id="mockCdHours">0</b><span>Hours</span></div>
+              <div class="count-item"><b id="mockCdMinutes">0</b><span>Minutes</span></div>
+              <div class="count-item"><b id="mockCdSeconds">0</b><span>Seconds</span></div>
+            </div>
+            <div class="calendar-note" style="margin-top:14px;">
+              <strong>Upcoming mock:</strong> <span id="mockNextDate">30 August 2026 • 08:59:59 AM</span><br>
+              <span class="muted tiny">Automatically moves forward by 21 days after each mock.</span>
+            </div>
+          </aside>
+
+          <aside class="panel glass reveal">
+            <h3>Flexible daily architecture</h3>
+            <div class="calendar-note">
+              Use the syllabus as the source of truth, then assign your own <strong>custom time slots</strong>
+              in Personal Tasks. The session recorder measures what you actually study.
+              <br><br>
+              <span class="badge">PCM • Main + Advanced • Personal tasks</span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="main-grid">
+      <div class="stack">
+        <section class="section glass reveal" id="studyPlan">
+          <div class="section-head">
+            <div>
+              <h3>JEE Main + Advanced syllabus</h3>
+              <p>Complete PCM syllabus tracker. Syllabus items intentionally have no date, deadline, or fixed schedule.</p>
+            </div>
+            <div>
+              <span class="chip today" id="liveDateChip">Today</span>
+            </div>
+          </div>
+
+          <div class="subject-filter" id="subjectFilter"></div>
+
+          <div class="table-wrap">
+            <table style="min-width:900px;">
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Task</th>
+                  <th>Chapter / Focus</th>
+                  <th>Difficulty</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="planTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section glass reveal" id="progressSection">
+          <div class="section-head">
+            <div>
+              <h3>Progress</h3>
+              <p>A separate progress dashboard for your JEE syllabus and personal tasks.</p>
+            </div>
+            <span class="chip done" id="progressOverallChip">0% Complete</span>
+          </div>
+
+          <div class="cards">
+            <div class="subject-row">
+              <strong>Overall</strong>
+              <div>
+                <div class="progress"><span id="overallProgressBar" style="width:0%"></span></div>
+                <div class="muted tiny" id="overallProgressDetail">0 of 0 items completed</div>
+              </div>
+              <strong id="overallProgressPercent">0%</strong>
+            </div>
+
+            <div class="subject-row">
+              <strong>Physics</strong>
+              <div>
+                <div class="progress"><span id="physicsProgressBar" style="width:0%"></span></div>
+                <div class="muted tiny" id="physicsProgressDetail">0 of 0 completed</div>
+              </div>
+              <strong id="physicsProgressPercent">0%</strong>
+            </div>
+
+            <div class="subject-row">
+              <strong>Chemistry</strong>
+              <div>
+                <div class="progress"><span id="chemistryProgressBar" style="width:0%"></span></div>
+                <div class="muted tiny" id="chemistryProgressDetail">0 of 0 completed</div>
+              </div>
+              <strong id="chemistryProgressPercent">0%</strong>
+            </div>
+
+            <div class="subject-row">
+              <strong>Mathematics</strong>
+              <div>
+                <div class="progress"><span id="mathematicsProgressBar" style="width:0%"></span></div>
+                <div class="muted tiny" id="mathematicsProgressDetail">0 of 0 completed</div>
+              </div>
+              <strong id="mathematicsProgressPercent">0%</strong>
+            </div>
+
+            <div class="subject-row">
+              <strong>Personal Tasks</strong>
+              <div>
+                <div class="progress"><span id="personalProgressBar" style="width:0%"></span></div>
+                <div class="muted tiny" id="personalProgressDetail">0 of 0 completed</div>
+              </div>
+              <strong id="personalProgressPercent">0%</strong>
+            </div>
+
+            <div class="mini-grid">
+              <div class="stat">
+                <div class="label">Completed Items</div>
+                <div class="value" id="progressCompletedCount">0</div>
+              </div>
+              <div class="stat">
+                <div class="label">Remaining Items</div>
+                <div class="value" id="progressRemainingCount">0</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section glass reveal" id="tasks">
+          <div class="section-head">
+            <div>
+              <h3>Add personal task</h3>
+              <p>Keep deadlines for personal work, while subjects and time slots can be completely custom.</p>
+            </div>
+          </div>
+
+          <form id="taskForm" class="form-grid">
+            <div class="field">
+              <label for="taskDate">Date</label>
+              <input class="input" id="taskDate" type="date" required>
+            </div>
+
+            <div class="field">
+              <label for="taskTime">Deadline Time</label>
+              <input class="input" id="taskTime" type="time" required>
+            </div>
+
+            <div class="field">
+              <label for="taskSubject">Subject</label>
+              <select class="select" id="taskSubject" required></select>
+            </div>
+
+            <div class="field" id="customSubjectField" style="display:none;">
+              <label for="customSubject">Custom Subject</label>
+              <input class="input" id="customSubject" type="text" placeholder="e.g. Revision, Doubt Solving, Mock Analysis">
+            </div>
+
+            <div class="field">
+              <label for="taskSlot">Time Slot</label>
+              <select class="select" id="taskSlot" required></select>
+            </div>
+
+            <div class="field" id="customSlotField" style="display:none;">
+              <label for="customSlot">Custom Time Slot</label>
+              <input class="input" id="customSlot" type="text" placeholder="e.g. 6:30–7:30 AM">
+            </div>
+
+            <div class="field">
+              <label for="taskDifficulty">Difficulty</label>
+              <select class="select" id="taskDifficulty" required>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label for="taskTitle">Task</label>
+              <input class="input" id="taskTitle" type="text" placeholder="Example: Solve 30 advanced-level problems from Electrostatics" required>
+            </div>
+
+            <div class="field full">
+              <label for="taskFocus">Chapter / Focus</label>
+              <textarea class="textarea" id="taskFocus" placeholder="Specific topics, modules, questions, revision targets, or note-making focus"></textarea>
+            </div>
+
+            <div class="field full">
+              <button class="btn primary" type="submit">Add Personal Task</button>
+            </div>
+          </form>
+          <div style="height:16px"></div>
+          <div class="cards" id="personalTaskList"></div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="section glass reveal" id="sessions">
+          <div class="section-head">
+            <div>
+              <h3>Record a study session</h3>
+              <p>Live timer + saved study logs.</p>
+            </div>
+          </div>
+
+          <div class="session-box">
+            <div class="mini-grid">
+              <div class="field">
+                <label for="sessionSubject">Subject</label>
+                <select class="select" id="sessionSubject"></select>
+              </div>
+              <div class="field">
+                <label for="sessionFocus">Focus</label>
+                <input class="input" id="sessionFocus" type="text" placeholder="Chapter / problem set / revision">
+              </div>
+            </div>
+
+            <div class="timer" id="timerDisplay">00:00:00</div>
+
+            <div class="session-meta">
+              <button class="btn primary" id="startSessionBtn" type="button">Start</button>
+              <button class="btn secondary" id="pauseSessionBtn" type="button">Pause</button>
+              <button class="btn" id="resumeSessionBtn" type="button">Resume</button>
+              <button class="btn warn" id="stopSessionBtn" type="button">Stop & Save</button>
+            </div>
+
+            <div class="log-list" id="sessionLog"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <nav class="quick-nav glass" id="quickNav" aria-label="Quick navigation">
+    <button class="quick-nav-btn active" data-target="overview" title="Overview">
+      <span class="quick-nav-icon">⌂</span><span>Overview</span>
+    </button>
+    <button class="quick-nav-btn" data-target="studyPlan" title="JEE syllabus">
+      <span class="quick-nav-icon">☷</span><span>Syllabus</span>
+    </button>
+    <button class="quick-nav-btn" data-target="progressSection" title="Progress">
+      <span class="quick-nav-icon">◒</span><span>Progress</span>
+    </button>
+    <button class="quick-nav-btn" data-target="sessions" title="Study sessions">
+      <span class="quick-nav-icon">◷</span><span>Sessions</span>
+    </button>
+    <button class="quick-nav-btn" data-target="tasks" title="Personal tasks">
+      <span class="quick-nav-icon">＋</span><span>Tasks</span>
+    </button>
+  </nav>
+
+  <button class="btn top-jump" id="topJump" title="Back to top" aria-label="Back to top">↑</button>
+  <div class="quick-hint">Quick nav · Home / P / G / S / T</div>
+
+  <div class="footer container">
+    Built for disciplined execution. Data is stored locally in your browser.<br/>
+    Made by Vatsal 🔱 · <span class="credit-link" id="openAboutBtn">About / Contact</span>
+  </div>
+
+  <div class="about-overlay" id="aboutOverlay">
+    <div class="about-card glass">
+      <div class="about-emoji">📖</div>
+      <h3>JEE Planner</h3>
+      <p>Developer: <strong>eternal_vatsal</strong></p>
+      <p>Contact: <a href="https://instagram.com/eternal_vatsal" target="_blank" rel="noopener">@eternal_vatsal</a> (Instagram)</p>
+      <p style="margin-top:14px; font-size:.8rem;">© Made by Vatsal 🔱. All rights reserved.<br/>Unauthorized copying, redistribution or republishing of this app without permission is prohibited.</p>
+      <button class="btn primary small" id="closeAboutBtn">Close</button>
+    </div>
+  </div>
+
+<script>
+const STORAGE_KEY = "jee-main-advanced-study-planner-v2";
+const THEME_KEY = "jee-theme-v2";
+const EXAM_DATE = new Date("2026-12-31T23:59:59");
+const baseSubjects = ["Physics","Chemistry","Mathematics"];
+const defaultPersonalSubjects = [...baseSubjects, "English","Revision","Doubt Solving"];
+const defaultTimeSlots = [
+"6:00–7:00 AM",
+"7:00–8:00 AM",
+"8:00–9:00 AM",
+"9:00–10:00 AM",
+"10:00–11:00 AM",
+"11:00 AM–12:00 PM",
+"12:00–1:00 PM",
+"1:00–2:00 PM",
+"2:00–3:00 PM",
+"3:00–4:00 PM",
+"4:00–5:00 PM",
+"5:00–6:00 PM",
+"6:00–7:00 PM",
+"7:00–8:00 PM",
+"8:00–9:00 PM",
+"9:00–10:00 PM",
+"10:00–11:00 PM"
+];
+const syllabus = [
+{subject:"Physics", focus:"Units, dimensions, errors, significant figures, vectors, basic mathematical tools", difficulty:"Medium"},
+{subject:"Physics", focus:"Kinematics: motion in 1D and 2D, relative motion, projectile motion", difficulty:"High"},
+{subject:"Physics", focus:"Laws of Motion: Newton's laws, friction, circular motion, connected bodies", difficulty:"High"},
+{subject:"Physics", focus:"Work, Energy and Power: work-energy theorem, potential energy, collisions", difficulty:"High"},
+{subject:"Physics", focus:"Centre of Mass, Momentum and System of Particles", difficulty:"High"},
+{subject:"Physics", focus:"Rotational Motion: torque, angular momentum, rolling, moment of inertia", difficulty:"High"},
+{subject:"Physics", focus:"Gravitation: satellites, escape velocity, orbital motion, potential", difficulty:"Medium"},
+{subject:"Physics", focus:"Properties of Solids and Fluids: elasticity, viscosity, surface tension, Bernoulli", difficulty:"Medium"},
+{subject:"Physics", focus:"Thermal Physics: calorimetry, thermal expansion, heat transfer, kinetic theory", difficulty:"Medium"},
+{subject:"Physics", focus:"Thermodynamics: laws, processes, heat engines, refrigerators", difficulty:"High"},
+{subject:"Physics", focus:"Oscillations: SHM, energy, springs, pendulum", difficulty:"High"},
+{subject:"Physics", focus:"Waves: wave equation, sound, standing waves, beats, Doppler effect", difficulty:"High"},
+{subject:"Physics", focus:"Electrostatics: charge, Coulomb's law, electric field, Gauss's law", difficulty:"High"},
+{subject:"Physics", focus:"Potential, capacitance, capacitors and dielectrics", difficulty:"High"},
+{subject:"Physics", focus:"Current Electricity: circuits, Kirchhoff laws, cells, meters, resistance", difficulty:"High"},
+{subject:"Physics", focus:"Magnetic Effects of Current and Magnetism", difficulty:"High"},
+{subject:"Physics", focus:"Electromagnetic Induction and Alternating Current", difficulty:"High"},
+{subject:"Physics", focus:"Electromagnetic Waves and spectrum", difficulty:"Medium"},
+{subject:"Physics", focus:"Ray Optics: mirrors, lenses, optical instruments", difficulty:"High"},
+{subject:"Physics", focus:"Wave Optics: interference, diffraction, polarization", difficulty:"High"},
+{subject:"Physics", focus:"Dual Nature of Matter and Radiation", difficulty:"Medium"},
+{subject:"Physics", focus:"Atoms and Nuclei: Bohr model, spectra, radioactivity, nuclear reactions", difficulty:"Medium"},
+{subject:"Physics", focus:"Electronic Devices: semiconductors, diodes, transistors, logic gates", difficulty:"Medium"},
+{subject:"Physics", focus:"Experimental Physics: measurements, instruments, graphs, practical reasoning", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Some Basic Concepts: mole concept, stoichiometry, concentration, limiting reagent", difficulty:"High"},
+{subject:"Chemistry", focus:"Atomic Structure: quantum numbers, orbitals, electronic configuration", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Classification of Elements and Periodicity in Properties", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Chemical Bonding: VSEPR, hybridisation, MOT, coordination of bonding concepts", difficulty:"High"},
+{subject:"Chemistry", focus:"Thermodynamics: enthalpy, entropy, Gibbs energy, spontaneity", difficulty:"High"},
+{subject:"Chemistry", focus:"Equilibrium: chemical equilibrium, ionic equilibrium, pH, buffers, solubility", difficulty:"High"},
+{subject:"Chemistry", focus:"Redox Reactions and oxidation-number methods", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Electrochemistry: cells, Nernst equation, conductance, electrolysis", difficulty:"High"},
+{subject:"Chemistry", focus:"Chemical Kinetics: rate laws, order, Arrhenius equation, activation energy", difficulty:"High"},
+{subject:"Chemistry", focus:"Solutions: concentration, colligative properties, abnormal molar mass", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Solid State: unit cells, packing, defects, density and calculations", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Surface Chemistry: adsorption, catalysis, colloids", difficulty:"Low"},
+{subject:"Chemistry", focus:"Inorganic: Hydrogen, s-block and related fundamental chemistry", difficulty:"Medium"},
+{subject:"Chemistry", focus:"p-Block Elements: trends, compounds and reactions", difficulty:"High"},
+{subject:"Chemistry", focus:"d- and f-Block Elements: properties, compounds, lanthanoids, actinoids", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Coordination Compounds: nomenclature, isomerism, bonding, CFT, reactions", difficulty:"High"},
+{subject:"Chemistry", focus:"Metallurgy / extraction principles and qualitative inorganic reasoning", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Organic Basics: nomenclature, isomerism, electronic effects, acidity/basicity", difficulty:"High"},
+{subject:"Chemistry", focus:"Hydrocarbons: alkane, alkene, alkyne and aromatic chemistry", difficulty:"High"},
+{subject:"Chemistry", focus:"Haloalkanes and Haloarenes", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Alcohols, Phenols and Ethers", difficulty:"Medium"},
+{subject:"Chemistry", focus:"Aldehydes, Ketones and Carboxylic Acids", difficulty:"High"},
+{subject:"Chemistry", focus:"Amines and nitrogen-containing organic compounds", difficulty:"High"},
+{subject:"Chemistry", focus:"Biomolecules, Polymers and Chemistry in Everyday Life", difficulty:"Low"},
+{subject:"Chemistry", focus:"Practical / qualitative chemistry: observations, tests, salts and organic identification", difficulty:"Medium"},
+{subject:"Mathematics", focus:"Sets, Relations and Functions", difficulty:"Medium"},
+{subject:"Mathematics", focus:"Complex Numbers and Quadratic Equations", difficulty:"High"},
+{subject:"Mathematics", focus:"Sequences and Series", difficulty:"High"},
+{subject:"Mathematics", focus:"Permutations and Combinations", difficulty:"High"},
+{subject:"Mathematics", focus:"Binomial Theorem and applications", difficulty:"Medium"},
+{subject:"Mathematics", focus:"Mathematical Induction and proof techniques", difficulty:"Medium"},
+{subject:"Mathematics", focus:"Trigonometric Functions, identities and equations", difficulty:"High"},
+{subject:"Mathematics", focus:"Inverse Trigonometric Functions", difficulty:"Medium"},
+{subject:"Mathematics", focus:"Matrices and Determinants", difficulty:"High"},
+{subject:"Mathematics", focus:"Limits, Continuity and Differentiability", difficulty:"High"},
+{subject:"Mathematics", focus:"Applications of Derivatives", difficulty:"High"},
+{subject:"Mathematics", focus:"Indefinite Integrals", difficulty:"High"},
+{subject:"Mathematics", focus:"Definite Integrals and properties", difficulty:"High"},
+{subject:"Mathematics", focus:"Area Under Curves", difficulty:"High"},
+{subject:"Mathematics", focus:"Differential Equations", difficulty:"High"},
+{subject:"Mathematics", focus:"Straight Lines", difficulty:"Medium"},
+{subject:"Mathematics", focus:"Circles", difficulty:"Medium"},
+{subject:"Mathematics", focus:"Parabola", difficulty:"High"},
+{subject:"Mathematics", focus:"Ellipse and Hyperbola", difficulty:"High"},
+{subject:"Mathematics", focus:"Coordinate Geometry: pair of lines and advanced locus/problem solving", difficulty:"High"},
+{subject:"Mathematics", focus:"3D Geometry: direction ratios/cosines, lines and planes", difficulty:"High"},
+{subject:"Mathematics", focus:"Vector Algebra", difficulty:"High"},
+{subject:"Mathematics", focus:"Probability", difficulty:"High"},
+{subject:"Mathematics", focus:"Statistics", difficulty:"Low"},
+{subject:"Mathematics", focus:"Mathematical reasoning and mixed problem-solving practice", difficulty:"Medium"}
+];
+function uid(){
+return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+}
+function escapeHtml(value){
+return String(value ?? "").replace(/[&<>"']/g, ch => ({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+}[ch]));
+}
+function difficultyChip(d){
+const cls = d === "High" ? "high" : d === "Medium" ? "med" : "low";
+return `<span class="chip ${cls}">${escapeHtml(d)}</span>`;
+}
+function formatSeconds(total){
+const h = String(Math.floor(total/3600)).padStart(2,"0");
+const m = String(Math.floor((total%3600)/60)).padStart(2,"0");
+const s = String(total%60).padStart(2,"0");
+return `${h}:${m}:${s}`;
+}
+function loadState(){
+const saved = localStorage.getItem(STORAGE_KEY);
+if(saved){
+try{
+const parsed = JSON.parse(saved);
+parsed.syllabus = Array.isArray(parsed.syllabus) ? parsed.syllabus : syllabus.map(makeSyllabusTask);
+parsed.personalTasks = Array.isArray(parsed.personalTasks) ? parsed.personalTasks : [];
+parsed.sessions = Array.isArray(parsed.sessions) ? parsed.sessions : [];
+parsed.customSubjects = Array.isArray(parsed.customSubjects) ? parsed.customSubjects.filter(x => String(x).trim().toLowerCase() !== "computer science") : [];
+parsed.customSlots = Array.isArray(parsed.customSlots) ? parsed.customSlots : [];
+parsed.personalTasks = parsed.personalTasks.filter(t => String(t.subject || "").trim().toLowerCase() !== "computer science");
+parsed.sessions = parsed.sessions.filter(s => String(s.subject || "").trim().toLowerCase() !== "computer science");
+parsed.activeFilter = parsed.activeFilter || "All";
+return parsed;
+}catch(e){}
+}
+const initial = {
+syllabus: syllabus.map(makeSyllabusTask),
+personalTasks: [],
+sessions: [],
+customSubjects: [],
+customSlots: [],
+activeFilter: "All"
+};
+localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+return initial;
+}
+function makeSyllabusTask(item){
+return {
+id: uid(),
+subject: item.subject,
+task: "Complete syllabus topic",
+focus: item.focus,
+difficulty: item.difficulty,
+done: false,
+type: "Syllabus",
+createdAt: new Date().toISOString()
+};
+}
+let state = loadState();
+function saveState(){
+localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+renderAll();
+}
+function setTheme(theme){
+document.documentElement.setAttribute("data-theme", theme);
+localStorage.setItem(THEME_KEY, theme);
+}
+function initTheme(){
+setTheme(localStorage.getItem(THEME_KEY) || "dark");
+}
+function getAllSubjects(){
+return [...new Set([...defaultPersonalSubjects, ...state.customSubjects])];
+}
+function getAllSlots(){
+return [...new Set([...defaultTimeSlots, ...state.customSlots])];
+}
+function renderSubjectControls(){
+const filter = document.getElementById("subjectFilter");
+const filterSubjects = ["All", ...baseSubjects];
+filter.innerHTML = filterSubjects.map(s => `
+<button class="subject-pill ${state.activeFilter===s ? "active":""}" data-subject="${escapeHtml(s)}">${escapeHtml(s)}</button>
+`).join("");
+filter.querySelectorAll(".subject-pill").forEach(btn=>{
+btn.addEventListener("click", ()=>{
+state.activeFilter = btn.dataset.subject;
+saveState();
+});
+});
+const taskSubject = document.getElementById("taskSubject");
+const currentSubject = taskSubject.value;
+taskSubject.innerHTML = getAllSubjects().map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("")
++ `<option value="__custom__">＋ Custom subject…</option>`;
+if([...taskSubject.options].some(o=>o.value===currentSubject)) taskSubject.value=currentSubject;
+const sessionSubject = document.getElementById("sessionSubject");
+const currentSessionSubject = sessionSubject.value;
+sessionSubject.innerHTML = getAllSubjects().map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("")
++ `<option value="__custom__">＋ Custom subject…</option>`;
+if([...sessionSubject.options].some(o=>o.value===currentSessionSubject)) sessionSubject.value=currentSessionSubject;
+const slot = document.getElementById("taskSlot");
+const currentSlot = slot.value;
+slot.innerHTML = getAllSlots().map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("")
++ `<option value="__custom__">＋ Custom time slot…</option>`;
+if([...slot.options].some(o=>o.value===currentSlot)) slot.value=currentSlot;
+}
+function renderPlanTable(){
+const tbody = document.getElementById("planTableBody");
+const tasks = state.syllabus
+.filter(t => state.activeFilter === "All" ? true : t.subject === state.activeFilter);
+tbody.innerHTML = tasks.map(task => `
+<tr>
+<td><strong>${escapeHtml(task.subject)}</strong></td>
+<td>${escapeHtml(task.task)}</td>
+<td>${escapeHtml(task.focus || "-")}</td>
+<td>${difficultyChip(task.difficulty)}</td>
+<td>${task.done ? '<span class="chip done">Done</span>' : '<span class="chip">Pending</span>'}</td>
+<td>
+<div class="task-actions">
+<button class="btn small ${task.done ? '' : 'primary'} toggle-syllabus" data-id="${task.id}">
+${task.done ? 'Undo' : 'Mark Done'}
+</button>
+</div>
+</td>
+</tr>
+`).join("");
+tbody.querySelectorAll(".toggle-syllabus").forEach(btn=>{
+btn.addEventListener("click", ()=>{
+const task = state.syllabus.find(t=>t.id===btn.dataset.id);
+if(task){
+task.done = !task.done;
+saveState();
+}
+});
+});
+}
+function personalStatusChip(task){
+if(task.done) return '<span class="chip done">Done</span>';
+const due = new Date(`${task.date}T${task.deadlineTime}:00`);
+if(task.date === new Date().toISOString().slice(0,10)) return '<span class="chip today">Today</span>';
+if(due < new Date()) return '<span class="chip high">Overdue</span>';
+return '<span class="chip">Pending</span>';
+}
+function renderPersonalTasks(){
+const existing = document.getElementById("personalTaskList");
+if(!existing) return;
+const data = [...state.personalTasks].sort((a,b)=>{
+const da = new Date(`${a.date}T${a.deadlineTime}:00`);
+const db = new Date(`${b.date}T${b.deadlineTime}:00`);
+return da-db;
+});
+existing.innerHTML = data.length ? data.map(t=>`
+<div class="log-item">
+<div>
+<strong>${escapeHtml(t.task)}</strong>
+<div class="muted tiny">
+${escapeHtml(t.subject)} • ${escapeHtml(t.slot)} • ${escapeHtml(t.date)} ${escapeHtml(t.deadlineTime)}
+${t.focus ? " • " + escapeHtml(t.focus) : ""}
+</div>
+</div>
+<div class="task-actions">
+${personalStatusChip(t)}
+<button class="btn small ${t.done ? '' : 'primary'} toggle-personal" data-id="${t.id}">${t.done ? "Undo" : "Done"}</button>
+<button class="btn small warn delete-personal" data-id="${t.id}">Delete</button>
+</div>
+</div>
+`).join("") : `<div class="muted tiny">No personal tasks yet.</div>`;
+existing.querySelectorAll(".toggle-personal").forEach(btn=>{
+btn.addEventListener("click", ()=>{
+const t = state.personalTasks.find(x=>x.id===btn.dataset.id);
+if(t){ t.done=!t.done; saveState(); }
+});
+});
+existing.querySelectorAll(".delete-personal").forEach(btn=>{
+btn.addEventListener("click", ()=>{
+state.personalTasks = state.personalTasks.filter(x=>x.id!==btn.dataset.id);
+saveState();
+});
+});
+}
+function renderStats(){
+const total = state.syllabus.length + state.personalTasks.length;
+const completed = state.syllabus.filter(t=>t.done).length + state.personalTasks.filter(t=>t.done).length;
+const progress = total ? Math.round((completed/total)*100) : 0;
+document.getElementById("overallProgressText").textContent = progress + "%";
+document.getElementById("completedCount").textContent = completed;
+const hours = state.sessions.reduce((sum,s)=>sum+(s.seconds/3600),0);
+document.getElementById("studyHours").textContent = hours.toFixed(1)+"h";
+const today = new Date().toISOString().slice(0,10);
+const pendingToday = state.personalTasks.filter(t=>t.date===today && !t.done).length;
+document.getElementById("todayPending").textContent = pendingToday;
+document.getElementById("liveDateChip").textContent =
+"Today • " + new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+}
+function renderProgress(){
+const allItems = [...state.syllabus, ...state.personalTasks];
+const completed = allItems.filter(t => t.done).length;
+const total = allItems.length;
+const overall = total ? Math.round((completed / total) * 100) : 0;
+const setProgress = (barId, detailId, percentId, items) => {
+const done = items.filter(t => t.done).length;
+const count = items.length;
+const percent = count ? Math.round((done / count) * 100) : 0;
+document.getElementById(barId).style.width = percent + "%";
+document.getElementById(detailId).textContent = `${done} of ${count} completed`;
+document.getElementById(percentId).textContent = percent + "%";
+};
+setProgress("overallProgressBar", "overallProgressDetail", "overallProgressPercent", allItems);
+setProgress("physicsProgressBar", "physicsProgressDetail", "physicsProgressPercent",
+state.syllabus.filter(t => t.subject === "Physics"));
+setProgress("chemistryProgressBar", "chemistryProgressDetail", "chemistryProgressPercent",
+state.syllabus.filter(t => t.subject === "Chemistry"));
+setProgress("mathematicsProgressBar", "mathematicsProgressDetail", "mathematicsProgressPercent",
+state.syllabus.filter(t => t.subject === "Mathematics"));
+setProgress("personalProgressBar", "personalProgressDetail", "personalProgressPercent",
+state.personalTasks);
+document.getElementById("progressOverallChip").textContent = overall + "% Complete";
+document.getElementById("progressCompletedCount").textContent = completed;
+document.getElementById("progressRemainingCount").textContent = Math.max(0, total - completed);
+}
+function renderSessions(){
+const wrap = document.getElementById("sessionLog");
+const data = [...state.sessions].reverse();
+wrap.innerHTML = data.length ? data.map(s=>`
+<div class="log-item">
+<div>
+<strong>${escapeHtml(s.subject)}</strong>
+<div class="muted tiny">${escapeHtml(s.focus || "Focused study")} • ${new Date(s.savedAt).toLocaleString()}</div>
+</div>
+<div><span class="chip done">${formatSeconds(s.seconds)}</span></div>
+</div>
+`).join("") : `<div class="muted tiny">No session saved yet.</div>`;
+}
+function renderAll(){
+renderSubjectControls();
+renderPlanTable();
+renderPersonalTasks();
+renderStats();
+renderProgress();
+renderSessions();
+}
+function setupPersonalTaskForm(){
+const taskSubject = document.getElementById("taskSubject");
+const customSubjectField = document.getElementById("customSubjectField");
+const customSubject = document.getElementById("customSubject");
+const taskSlot = document.getElementById("taskSlot");
+const customSlotField = document.getElementById("customSlotField");
+const customSlot = document.getElementById("customSlot");
+taskSubject.addEventListener("change", ()=>{
+const isCustom = taskSubject.value === "__custom__";
+customSubjectField.style.display = isCustom ? "grid" : "none";
+if(isCustom) customSubject.focus();
+});
+taskSlot.addEventListener("change", ()=>{
+const isCustom = taskSlot.value === "__custom__";
+customSlotField.style.display = isCustom ? "grid" : "none";
+if(isCustom) customSlot.focus();
+});
+document.getElementById("sessionSubject").addEventListener("change", ()=>{
+if(document.getElementById("sessionSubject").value === "__custom__"){
+const custom = prompt("Enter a custom session subject:");
+if(custom && custom.trim()){
+const value = custom.trim();
+if(!state.customSubjects.includes(value)) state.customSubjects.push(value);
+renderSubjectControls();
+document.getElementById("sessionSubject").value = value;
+saveState();
+}else{
+document.getElementById("sessionSubject").value = baseSubjects[0];
+}
+}
+});
+document.getElementById("taskForm").addEventListener("submit", e=>{
+e.preventDefault();
+let subject = taskSubject.value;
+let slot = taskSlot.value;
+if(subject === "__custom__"){
+subject = customSubject.value.trim();
+if(!subject){ alert("Enter a custom subject."); customSubject.focus(); return; }
+if(!state.customSubjects.includes(subject)) state.customSubjects.push(subject);
+}
+if(slot === "__custom__"){
+slot = customSlot.value.trim();
+if(!slot){ alert("Enter a custom time slot."); customSlot.focus(); return; }
+if(!state.customSlots.includes(slot)) state.customSlots.push(slot);
+}
+state.personalTasks.push({
+id: uid(),
+date: document.getElementById("taskDate").value,
+deadlineTime: document.getElementById("taskTime").value,
+subject,
+slot,
+difficulty: document.getElementById("taskDifficulty").value,
+task: document.getElementById("taskTitle").value.trim(),
+focus: document.getElementById("taskFocus").value.trim(),
+type: "Personal",
+done: false,
+createdAt: new Date().toISOString()
+});
+e.target.reset();
+customSubjectField.style.display = "none";
+customSlotField.style.display = "none";
+renderSubjectControls();
+saveState();
+});
+}
+function showView(targetId, updateHash = true){
+const hero = document.getElementById("overview");
+const syllabusView = document.getElementById("studyPlan");
+const sessionsView = document.getElementById("sessions");
+const tasksView = document.getElementById("tasks");
+const progressView = document.getElementById("progressSection");
+const mainGrid = document.querySelector(".main-grid");
+const views = {
+overview: hero,
+studyPlan: syllabusView,
+progressSection: progressView,
+sessions: sessionsView,
+tasks: tasksView
+};
+const target = views[targetId] || hero;
+Object.values(views).forEach(el => {
+if(!el) return;
+el.classList.remove("app-view-active");
+el.classList.add("app-view-hidden");
+});
+target.classList.remove("app-view-hidden");
+target.classList.add("app-view-active");
+mainGrid.classList.toggle("single-view", targetId !== "overview");
+document.querySelectorAll(".quick-nav-btn").forEach(btn=>{
+btn.classList.toggle("active", btn.dataset.target === targetId);
+});
+if(updateHash){
+history.replaceState(null, "", "#" + targetId);
+}
+window.scrollTo({top:0, behavior:"smooth"});
+}
+document.querySelectorAll(".quick-nav-btn").forEach(btn=>{
+btn.addEventListener("click", ()=>showView(btn.dataset.target));
+});
+document.getElementById("topJump").addEventListener("click", ()=>showView("overview"));
+document.addEventListener("keydown", e=>{
+if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)) return;
+const key = e.key.toLowerCase();
+if(key === "h") showView("overview");
+if(key === "p") showView("studyPlan");
+if(key === "g") showView("progressSection");
+if(key === "s") showView("sessions");
+if(key === "t") showView("tasks");
+});
+const initialView = location.hash ? location.hash.slice(1) : "overview";
+showView(["overview","studyPlan","progressSection","sessions","tasks"].includes(initialView) ? initialView : "overview", false);
+document.getElementById("themeToggle").addEventListener("click", ()=>{
+const current = document.documentElement.getAttribute("data-theme");
+setTheme(current === "dark" ? "light" : "dark");
+});
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+if(confirm("Reset all JEE syllabus progress, personal tasks and study sessions?")){
+localStorage.removeItem(STORAGE_KEY);
+state = loadState();
+renderAll();
+syncTimer();
+}
+});
+document.getElementById("exportBtn").addEventListener("click", ()=>{
+const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = "jee-main-advanced-study-planner-data.json";
+a.click();
+URL.revokeObjectURL(url);
+});
+document.getElementById("importBtn").addEventListener("click", ()=>{
+document.getElementById("importFile").click();
+});
+document.getElementById("importFile").addEventListener("change", e=>{
+const file = e.target.files[0];
+if(!file) return;
+const reader = new FileReader();
+reader.onload = ()=>{
+try{
+const data = JSON.parse(reader.result);
+if(data.syllabus && data.personalTasks && data.sessions){
+state = {
+syllabus: data.syllabus,
+personalTasks: data.personalTasks,
+sessions: (data.sessions || []).filter(s => String(s.subject || "").trim().toLowerCase() !== "computer science"),
+customSubjects: (data.customSubjects || []).filter(x => String(x).trim().toLowerCase() !== "computer science"),
+customSlots: data.customSlots || [],
+activeFilter: data.activeFilter || "All"
+};
+saveState();
+}else{
+alert("Invalid planner file.");
+}
+}catch(err){
+alert("Import failed.");
+}
+};
+reader.readAsText(file);
+});
+function updateCountdown(){
+const diff = Math.max(0, EXAM_DATE - new Date());
+const d = Math.floor(diff/(1000*60*60*24));
+const h = Math.floor((diff/(1000*60*60))%24);
+const m = Math.floor((diff/(1000*60))%60);
+const s = Math.floor((diff/1000)%60);
+document.getElementById("cdDays").textContent = d;
+document.getElementById("cdHours").textContent = h;
+document.getElementById("cdMinutes").textContent = m;
+document.getElementById("cdSeconds").textContent = s;
+}
+const MOCK_FIRST_DATE = new Date("2026-08-30T08:59:59");
+const MOCK_INTERVAL_MS = 21 * 24 * 60 * 60 * 1000;
+function getNextMockDate(now = new Date()){
+if(now < MOCK_FIRST_DATE) return new Date(MOCK_FIRST_DATE);
+const elapsed = now.getTime() - MOCK_FIRST_DATE.getTime();
+const cycles = Math.floor(elapsed / MOCK_INTERVAL_MS) + 1;
+return new Date(MOCK_FIRST_DATE.getTime() + cycles * MOCK_INTERVAL_MS);
+}
+function updateMockCountdown(){
+const now = new Date();
+const target = getNextMockDate(now);
+const diff = Math.max(0, target - now);
+const d = Math.floor(diff/(1000*60*60*24));
+const h = Math.floor((diff/(1000*60*60))%24);
+const m = Math.floor((diff/(1000*60))%60);
+const sec = Math.floor((diff/1000)%60);
+document.getElementById("mockCdDays").textContent = d;
+document.getElementById("mockCdHours").textContent = h;
+document.getElementById("mockCdMinutes").textContent = m;
+document.getElementById("mockCdSeconds").textContent = sec;
+document.getElementById("mockNextDate").textContent = target.toLocaleString("en-GB", {
+day:"2-digit", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:true
+});
+}
+let sessionSeconds = 0;
+let sessionInterval = null;
+let sessionRunning = false;
+function syncTimer(){
+document.getElementById("timerDisplay").textContent = formatSeconds(sessionSeconds);
+}
+function startTimer(){
+if(sessionRunning) return;
+sessionRunning = true;
+sessionInterval = setInterval(()=>{
+sessionSeconds++;
+syncTimer();
+},1000);
+}
+document.getElementById("startSessionBtn").addEventListener("click", ()=>{
+sessionSeconds = 0;
+clearInterval(sessionInterval);
+sessionRunning = false;
+syncTimer();
+startTimer();
+});
+document.getElementById("pauseSessionBtn").addEventListener("click", ()=>{
+if(!sessionRunning) return;
+clearInterval(sessionInterval);
+sessionRunning = false;
+});
+document.getElementById("resumeSessionBtn").addEventListener("click", ()=>{
+if(sessionRunning || sessionSeconds===0) return;
+startTimer();
+});
+document.getElementById("stopSessionBtn").addEventListener("click", ()=>{
+if(sessionSeconds===0) return;
+clearInterval(sessionInterval);
+sessionRunning = false;
+let subject = document.getElementById("sessionSubject").value;
+if(subject === "__custom__"){
+const custom = prompt("Enter a custom session subject:");
+if(custom && custom.trim()){
+subject = custom.trim();
+if(!state.customSubjects.includes(subject)) state.customSubjects.push(subject);
+}else{
+subject = "Custom Study";
+}
+}
+state.sessions.push({
+id: uid(),
+subject,
+focus: document.getElementById("sessionFocus").value.trim(),
+seconds: sessionSeconds,
+savedAt: new Date().toISOString()
+});
+sessionSeconds = 0;
+document.getElementById("sessionFocus").value = "";
+syncTimer();
+saveState();
+});
+const io = new IntersectionObserver(entries=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+entry.target.style.opacity = "1";
+entry.target.style.transform = "translateY(0)";
+}
+});
+}, {threshold:0.1});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+const quickNav = document.getElementById("quickNav");
+const topJump = document.getElementById("topJump");
+function updateQuickNav(){
+topJump.classList.toggle("show", window.scrollY > 500);
+quickNav.classList.toggle("hidden", false);
+}
+window.addEventListener("scroll", updateQuickNav, {passive:true});
+initTheme();
+setupPersonalTaskForm();
+renderAll();
+syncTimer();
+updateCountdown();
+updateMockCountdown();
+setInterval(updateCountdown,1000);
+setInterval(updateMockCountdown,1000);
+updateQuickNav();
+window.addEventListener("load", () => {
+setTimeout(() => {
+const splash = document.getElementById("splashScreen");
+if (splash) splash.classList.add("hide");
+}, 2500);
+});
+const aboutOverlay = document.getElementById("aboutOverlay");
+document.getElementById("openAboutBtn").addEventListener("click", () => {
+aboutOverlay.classList.add("show");
+});
+document.getElementById("closeAboutBtn").addEventListener("click", () => {
+aboutOverlay.classList.remove("show");
+});
+aboutOverlay.addEventListener("click", (e) => {
+if (e.target === aboutOverlay) aboutOverlay.classList.remove("show");
+});
+if ("serviceWorker" in navigator) {
+window.addEventListener("load", () => {
+navigator.serviceWorker.register("sw.js").catch(err => {
+console.warn("Service worker registration failed:", err);
+});
+});
+}
+</script>
+</body>
+</html>
